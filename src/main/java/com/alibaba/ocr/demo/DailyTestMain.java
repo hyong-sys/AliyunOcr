@@ -1,7 +1,9 @@
 package com.alibaba.ocr.demo;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.aliyun.api.gateway.demo.util.HttpUtils;
 import com.entity.Ocrentity;
 import com.sun.tools.corba.se.idl.constExpr.Or;
@@ -26,7 +28,7 @@ import java.util.Map;
  * @author hyong
  * @since 2021/10/15
  */
-public class TestMain {
+public class DailyTestMain {
 	public static void main(String[] args) throws Exception {
 		String host = "https://ocrapi-advanced.taobao.com";//https://ocrdiy.market.alicloudapi.com
 		String path = "/ocrservice/advanced";//  /api/predict/ocr_sdt
@@ -38,7 +40,7 @@ public class TestMain {
 		//根据API的要求，定义相对应的Content-Type
 		headers.put("Content-Type", "application/json; charset=UTF-8");
 		Map<String, String> querys = new HashMap<String, String>();
-		String bodys = "{\"img\":\""+ changeToBase64("/Users/hyong/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/b0c013c04846999a1c6689d0ea72580b/Message/MessageTemp/9e20f478899dc29eb19741386f9343c8/Image/2661637649717_.pic.jpg")+"\",\"prob\":false,\"charInfo\":false,\"rotate\":false,\"table\":false}";
+		String bodys = "{\"img\":\""+ changeToBase64("/Users/hyong/Desktop/2661637649717_.pic.jpg")+"\",\"prob\":false,\"charInfo\":false,\"rotate\":false,\"table\":false}";
 		//String bodys = "{\"image\":\""+changeToBase64("/Users/hyong/Desktop/test.jpg")+"\",\"configure\": \"{\\\"template_id\\\":\\\"9e9b4617-24f9-47d5-b1c8-8a91075b35011634191935\\\"}\"}";     模版ocr
 		try {
 			/**
@@ -57,13 +59,33 @@ public class TestMain {
 			String body = EntityUtils.toString(httpEntity);
 			System.out.println(body);
 			JSONObject jsonObject = JSON.parseObject(body);
-			String content = jsonObject.getString("content");
-			String[] arraylist = content.split(" ");
-
-			List<String> list = Arrays.asList(arraylist);
-			String regex2 = ".*[0-9].*";//含有数字
+			JSONArray jsonArray = jsonObject.getJSONArray("prism_wordsInfo");
+			List<String> list = new ArrayList<>();
+			for (Object obj : jsonArray) {
+				JSONObject jsonObject1 = JSONObject.parseObject(obj.toString());////////////
+				list.add(jsonObject1.getString("word"));
+			}
 			List<Ocrentity> result = new ArrayList<>();
-			boolean flag = false;//开始获取数据标识
+			for (int i = 0; i < list.size(); i++) {
+				String str = list.get(i);
+				if (str.equals("持仓收益/率")){
+					String tco = list.get(i - 3);
+					Ocrentity ocrentity = new Ocrentity();
+					ocrentity.setFundTitle(tco.substring(0,tco.length() - 6));
+					ocrentity.setFundCode(tco.substring(tco.length() - 6));
+					ocrentity.setIndexDataOne(list.get(i + 1));
+					ocrentity.setIndexDataTwo(list.get(i + 3));
+					ocrentity.setIndexDataThree(list.get(i + 4));
+					result.add(ocrentity);
+					i += 4;
+				}
+			}
+			//String content = jsonObject.getString("content");
+			//String[] arraylist = content.split(" ");
+
+			//List<String> list = Arrays.asList(arraylist);
+			//String regex2 = ".*[0-9].*";//含有数字
+			//boolean flag = false;//开始获取数据标识
 			/*String s1 = "北上资金缓慢入场，看好慢涨行情";
 			String s2 = "04-26";
 			boolean b1 = s1.matches(regex2);
@@ -91,7 +113,7 @@ public class TestMain {
 				}
 
 			}*/
-			for (int i = 0; i < list.size(); i++) {
+			/*for (int i = 0; i < list.size(); i++) {
 				String str = list.get(i);
 				if (str.equals("持仓收益/率")){
 					Ocrentity ocrentity = new Ocrentity();
@@ -103,9 +125,9 @@ public class TestMain {
 					result.add(ocrentity);
 					i += 5;
 				}
-			}
+			}*/
 
-			System.out.println(list);
+			System.out.println(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
