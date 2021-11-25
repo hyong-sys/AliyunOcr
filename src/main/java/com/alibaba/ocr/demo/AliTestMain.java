@@ -33,7 +33,7 @@ public class AliTestMain {
 		//根据API的要求，定义相对应的Content-Type
 		headers.put("Content-Type", "application/json; charset=UTF-8");
 		Map<String, String> querys = new HashMap<String, String>();
-		String bodys = "{\"img\":\""+ DailyTestMain.changeToBase64("/Users/hyong/Library/Containers/com.tencent.xinWeChat/Data/Library/Application Support/com.tencent.xinWeChat/2.0b4.0.9/b0c013c04846999a1c6689d0ea72580b/Message/MessageTemp/96e2ed7d411e131e343660fc20f60486/Image/451637560097_.pic_hd.jpg")+"\",\"prob\":false,\"charInfo\":false,\"rotate\":false,\"table\":false}";
+		String bodys = "{\"img\":\""+ DailyTestMain.changeToBase64("C:\\Users\\A\\Desktop\\微信图片_20211125234342.png")+"\",\"prob\":false,\"charInfo\":false,\"rotate\":false,\"table\":false}";
 		try {
 			HttpResponse response = HttpUtils.doPost(host, path, method, headers, querys, bodys);
 			System.out.println(response.toString());
@@ -50,8 +50,8 @@ public class AliTestMain {
 			}
 
 			for (int i = 0; i < list.size(); i++) {
-				String s = list.get(i);
-				if (s.equals("交易记录")){
+				String startflag = list.get(i);
+				if (startflag.equals("交易记录")){
 
 				}
 			}
