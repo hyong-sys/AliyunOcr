@@ -62,6 +62,7 @@ public class DailyTestMain {
 				JSONObject jsonObject1 = JSONObject.parseObject(obj.toString());////////////
 				list.add(jsonObject1.getString("word"));
 			}
+
 			List<Ocrentity> result = new ArrayList<>();
 			for (int i = 0; i < list.size(); i++) {
 				String str = list.get(i);
