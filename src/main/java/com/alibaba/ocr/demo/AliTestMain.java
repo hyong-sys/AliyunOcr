@@ -54,6 +54,7 @@ public class AliTestMain {
 			//获取response的body
 			String body = EntityUtils.toString(httpEntity);
 			System.out.println(body);
+
 			JSONObject jsonObject = JSON.parseObject(body);
 			//Map<String,Object> map = (Map<String,Object>)jsonObject.getString("prism_rowsInfo");
 
