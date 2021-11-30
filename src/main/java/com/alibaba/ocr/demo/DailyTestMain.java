@@ -37,7 +37,7 @@ public class DailyTestMain {
 		//根据API的要求，定义相对应的Content-Type
 		headers.put("Content-Type", "application/json; charset=UTF-8");
 		Map<String, String> querys = new HashMap<String, String>();
-		String bodys = "{\"img\":\""+ changeToBase64("/Users/hyong/Desktop/2661637649717_.pic.jpg")+"\",\"prob\":false,\"charInfo\":false,\"rotate\":false,\"table\":false}";
+		String bodys = "{\"img\":\""+ changeToBase64("/Users/hyong/Desktop/2661637649717_.pic.jpg")+"\",\"prob\":false,\"charInfo\":false,\"rotate\":false,\"table\":false,\"row\":true,\"paragraph\":true}";
 		//String bodys = "{\"image\":\""+changeToBase64("/Users/hyong/Desktop/test.jpg")+"\",\"configure\": \"{\\\"template_id\\\":\\\"9e9b4617-24f9-47d5-b1c8-8a91075b35011634191935\\\"}\"}";     模版ocr
 		try {
 			/**
@@ -57,27 +57,8 @@ public class DailyTestMain {
 			System.out.println(body);
 			JSONObject jsonObject = JSON.parseObject(body);
 			JSONArray jsonArray = jsonObject.getJSONArray("prism_wordsInfo");
-			List<String> list = new ArrayList<>();
-			for (Object obj : jsonArray) {
-				JSONObject jsonObject1 = JSONObject.parseObject(obj.toString());////////////
-				list.add(jsonObject1.getString("word"));
-			}
-
-			List<Ocrentity> result = new ArrayList<>();
-			for (int i = 0; i < list.size(); i++) {
-				String str = list.get(i);
-				if (str.equals("持仓收益/率")){
-					String tco = list.get(i - 3);
-					Ocrentity ocrentity = new Ocrentity();
-					ocrentity.setFundTitle(tco.substring(0,tco.length() - 6));
-					ocrentity.setFundCode(tco.substring(tco.length() - 6));
-					ocrentity.setIndexDataOne(list.get(i + 1));
-					ocrentity.setIndexDataTwo(list.get(i + 3));
-					ocrentity.setIndexDataThree(list.get(i + 4));
-					result.add(ocrentity);
-					i += 4;
-				}
-			}
+			String content = jsonObject.getString("content");
+			System.out.println(content);
 			//String content = jsonObject.getString("content");
 			//String[] arraylist = content.split(" ");
 
@@ -124,8 +105,6 @@ public class DailyTestMain {
 					i += 5;
 				}
 			}*/
-
-			System.out.println(result);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
